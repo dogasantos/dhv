@@ -19,7 +19,7 @@ func worker(id int, jobs <-chan string, results chan<-string) {
 	var found []string
 	
 	for item := range jobs {
-		fmt.Printf("Processing this: %s",item)
+		fmt.Printf("[%d] Processing this: %s",id,item)
 		if gonet.IsFQDN(item) {
 			if sliceContainsElement(found, item) == false {
 				found = append(found, item)
