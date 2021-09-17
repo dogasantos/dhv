@@ -24,7 +24,6 @@ func main() {
 	options := dhv.Options{}
 	
 	flag.StringVar(&options.Hosts, 			"L", "", "File input with list of hosts")
-	flag.StringVar(&options.OutputFile, 	"o", "", "File to write output to (optional)")
 	flag.BoolVar(&options.Verbose, 			"verbose", false, "Verbose output")
 
 	flag.Parse()
