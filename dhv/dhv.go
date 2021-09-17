@@ -64,6 +64,10 @@ func Process(options *Options) {
 
 	for _, item := range lines {
 		if len(item) > 2 {
+			if strings.Contains(item,"*.") {
+				a := strings.ReplaceAll(item, "*.", "")
+				item = a
+			}
 			jobs <- item
 		}
 	}
