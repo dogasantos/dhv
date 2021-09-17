@@ -14,29 +14,9 @@ type Options struct {
 	Verbose           bool
 }
 
-func worker(id int, jobs <-chan string, results chan<-string) {
-	var found []string
-	
-	for item := range jobs {
-		fmt.Printf("[%d] Processing this: %s",id,item)
-		if gonet.IsFQDN(item) {
-			if sliceContainsElement(found, item) == false {
-				found = append(found, item)
-				results <- item
-			}
-		} else {
-			if gonet.IsDomain(item) {
-				if sliceContainsElement(found, item) == false {
-					found = append(found, item)
-					results <- item
-				}
-			}
-		}
-	}
-}
 
 func Process(options *Options) {	
-	const numJobs = 10
+	var found []string
 
 	if options.Verbose {
 		fmt.Printf("[*] Loading file: %s\n",options.Hosts)
@@ -50,27 +30,27 @@ func Process(options *Options) {
 		fmt.Printf("[*] Target hosts loaded: %d\n",len(lines))
 	}
 	
-	jobs := make(chan string, numJobs)
-	results := make(chan string, numJobs)
-
-	for w := 1; w <= 4; w++ {
-		go worker(w, jobs, results)
-	}
-
-	for _, item := range lines {
+	for _,item := range lines {
 		if len(item) > 2 {
 			if strings.Contains(item,"*.") {
 				a := strings.ReplaceAll(item, "*.", "")
 				item = a
 			}
-			jobs <- item
+
+			if gonet.IsFQDN(item) {
+				if sliceContainsElement(found, item) == false {
+					found = append(found, item)
+					fmt.Println(item)
+				}
+			} else {
+				if gonet.IsDomain(item) {
+					if sliceContainsElement(found, item) == false {
+						found = append(found, item)
+						fmt.Println(item)
+					}
+				}
+			}
 		}
 	}
-	close(jobs)
-
-	for a := 1; a <= numJobs; a++ {
-        <-results
-    }
-
 	
 }
