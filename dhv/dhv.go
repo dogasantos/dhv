@@ -14,7 +14,6 @@ type Options struct {
 	Verbose           bool
 }
 
-
 func worker(id int, jobs <-chan string, results chan<-string) {
 	var found []string
 	
@@ -35,8 +34,6 @@ func worker(id int, jobs <-chan string, results chan<-string) {
 		}
 	}
 }
-
-
 
 func Process(options *Options) {	
 	const numJobs = 10
