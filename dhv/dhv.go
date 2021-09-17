@@ -59,7 +59,7 @@ func Process(options *Options) {
 	jobs := make(chan string, numJobs)
 	results := make(chan string, numJobs)
 
-	for w := 1; w <= 100; w++ {
+	for w := 1; w <= 4; w++ {
 		go worker(w, jobs, results)
 	}
 
