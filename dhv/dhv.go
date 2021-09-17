@@ -23,14 +23,12 @@ func worker(id int, jobs <-chan string, results chan<-string) {
 		if gonet.IsFQDN(item) {
 			if sliceContainsElement(found, item) == false {
 				found = append(found, item)
-				fmt.Println(item)
 				results <- item
 			}
 		} else {
 			if gonet.IsDomain(item) {
 				if sliceContainsElement(found, item) == false {
 					found = append(found, item)
-					fmt.Println(item)
 					results <- item
 				}
 			}
@@ -41,7 +39,6 @@ func worker(id int, jobs <-chan string, results chan<-string) {
 
 
 func Process(options *Options) {	
-	var found []string
 	const numJobs = 10
 
 	if options.Verbose {
@@ -74,7 +71,9 @@ func Process(options *Options) {
 	}
 	close(jobs)
 
-	if options.Verbose {
-		fmt.Printf("[*] Found %d valid entries\n",len(found))
-	}
+	for a := 1; a <= numJobs; a++ {
+        <-results
+    }
+
+	
 }
