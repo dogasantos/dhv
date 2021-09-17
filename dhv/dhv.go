@@ -21,7 +21,9 @@ func Process(options *Options) {
 	
 	var found []string
 	var hostname string 
-
+	if options.Verbose {
+		fmt.Printf("[*] Loading file: %s\n",options.Hosts)
+	}
 	bytesRead, _ := ioutil.ReadFile(options.Hosts)
 	file_content := string(bytesRead)
 	h := strings.Split(file_content, "\n")
@@ -47,7 +49,6 @@ func Process(options *Options) {
 			}
 		}
 	}
-		
 
 	fmt.Printf("[*] Found %d hosts\n",len(found))
 
