@@ -13,7 +13,8 @@ type Options struct {
 	Silent            bool
 	Verbose           bool
 }
- 
+
+
 func worker(id int, jobs <-chan string, results chan<-string) {
 	var found []string
 	
