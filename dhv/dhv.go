@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"sync"
 
 	gonet "github.com/THREATINT/go-net"
 )
@@ -15,9 +16,10 @@ type Options struct {
 }
 
 
-func Process(options *Options) {	
-	var found []string
 
+func Process(options *Options) {
+	var wg sync.WaitGroup
+	
 	if options.Verbose {
 		fmt.Printf("[*] Loading file: %s\n",options.Hosts)
 	}
@@ -29,28 +31,25 @@ func Process(options *Options) {
 	if options.Verbose {
 		fmt.Printf("[*] Target hosts loaded: %d\n",len(lines))
 	}
-	
+
 	for _,item := range lines {
 		if len(item) > 2 {
 			if strings.Contains(item,"*.") {
 				a := strings.ReplaceAll(item, "*.", "")
 				item = a
 			}
-
-			if gonet.IsFQDN(item) {
-				if sliceContainsElement(found, item) == false {
-					found = append(found, item)
-					fmt.Println(item)
-				}
-			} else {
-				if gonet.IsDomain(item) {
-					if sliceContainsElement(found, item) == false {
-						found = append(found, item)
-						fmt.Println(item)
+			wg.Add(1)
+			go func(candidate string) {
+				defer wg.Done()
+				if gonet.IsFQDN(candidate) {
+					fmt.Println(candidate)
+				} else {
+					if gonet.IsDomain(candidate) {
+						fmt.Println(candidate)
 					}
 				}
-			}
+			}(item)
 		}
 	}
-	
+	wg.Wait()	
 }
