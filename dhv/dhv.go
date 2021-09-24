@@ -51,7 +51,6 @@ func Process(options *Options) {
 						//d.Domain = parsed.SLD
 						//d.Tld = parsed.TLD
 
-					
 						if (options.Fqdn == true || (options.SubDomain && options.Domain && options.Suffix)) && found == false {
 							fmt.Println(parsed.String())
 							found = true
@@ -91,4 +90,5 @@ func Process(options *Options) {
 			}(item)
 		}
 	}
-	wg.Wait()	
+	wg.Wait()
+}
