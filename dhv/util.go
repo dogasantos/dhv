@@ -40,8 +40,6 @@ func sliceContainsElement(slice []string, element string) bool {
 	return retval
 }
 
-
-
 func sliceUniqueElements(slice []string) []string {
     keys := make(map[string]bool)
     list := []string{}
