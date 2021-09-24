@@ -43,34 +43,35 @@ func Process(options *Options) {
 			go func(candidate string) {
 				defer wg.Done()
 				if gonet.IsFQDN(candidate) || gonet.IsDomain(candidate) {
-					parsed := ParseTokens(candidate)
-					d := ParseUrlTokens(parsed.String())
-					d.Subdomain = parsed.TRD
-					d.Domain = parsed.SLD
-					d.Tld = parsed.TLD
-				
-					if options.Fqdn == true {
-						fmt.Println(parsed.String())
-					} else {
-						if options.Protocol {
-							if len(d.Protocol) > 0 {
-								fmt.Printf("%s ",d.Protocol)
+					parsed,err := ParseTokens(candidate)
+					if err == nil { 
+						d := ParseUrlTokens(parsed.String())
+						d.Subdomain = parsed.TRD
+						d.Domain = parsed.SLD
+						d.Tld = parsed.TLD
+					
+						if options.Fqdn == true {
+							fmt.Println(parsed.String())
+						} else {
+							if options.Protocol {
+								if len(d.Protocol) > 0 {
+									fmt.Printf("%s ",d.Protocol)
+								}
 							}
-						}
-						if options.SubDomain {
-							if len(d.Subdomain) >0 {
-								fmt.Printf("%s ",d.Subdomain)
+							if options.SubDomain {
+								if len(d.Subdomain) >0 {
+									fmt.Printf("%s ",d.Subdomain)
+								}
 							}
+							if options.Domain {
+								fmt.Printf("%s.%s",d.Domain,d.Tld)
+							}
+							if options.Suffix {
+								fmt.Printf("%s ",d.Tld)
+							}
+							fmt.Printf("\n")
 						}
-						if options.Domain {
-							fmt.Printf("%s.%s",d.Domain,d.Tld)
-						}
-						if options.Suffix {
-							fmt.Printf("%s ",d.Tld)
-						}
-						fmt.Printf("\n")
 					}
-
 				}
 			}(item)
 		}

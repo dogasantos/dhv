@@ -21,12 +21,12 @@ func ParseUrlTokens(value string) (*DomainTokens){
 	return &d
 }
 
-func ParseTokens(value string) *publicsuffix.DomainName {
+func ParseTokens(value string) (*publicsuffix.DomainName, error) {
 	var options publicsuffix.ParserOption
 	options.PrivateDomains = false
 	options.ASCIIEncoded = false
-	parsed,_ := publicsuffix.Parse(value)
-	return parsed
+	parsed,err := publicsuffix.Parse(value)
+	return parsed,err
 
 }
 
