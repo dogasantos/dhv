@@ -34,6 +34,7 @@ func Process(options *Options) {
 	}
 
 	for _,item := range lines {
+		var found = false
 		if len(item) > 2 {
 			if strings.Contains(item,"*.") {
 				a := strings.ReplaceAll(item, "*.", "")
@@ -46,30 +47,44 @@ func Process(options *Options) {
 					parsed,err := ParseTokens(candidate)
 					if err == nil { 
 						d := ParseUrlTokens(parsed.String())
-						d.Subdomain = parsed.TRD
-						d.Domain = parsed.SLD
-						d.Tld = parsed.TLD
+						//d.Subdomain = parsed.TRD
+						//d.Domain = parsed.SLD
+						//d.Tld = parsed.TLD
+
 					
-						if options.Fqdn == true {
+						if (options.Fqdn == true || (options.SubDomain && options.Domain && options.Suffix)) && found == false {
 							fmt.Println(parsed.String())
-						} else {
-							if options.Protocol {
-								if len(d.Protocol) > 0 {
-									fmt.Printf("%s ",d.Protocol)
-								}
+							found = true
+						}
+						if options.SubDomain && options.Domain && options.Suffix && found == false{
+							fmt.Println(parsed.String())
+							found = true
+						}
+						if options.Domain && options.Suffix && found == false{
+							fmt.Printf("%s.%s\n",parsed.SLD,parsed.TLD)
+							found = true
+						}
+
+						if options.Protocol && found == false{
+							if len(d.Protocol) > 0 {
+								fmt.Printf("%s\n",d.Protocol)
+								found = true
 							}
-							if options.SubDomain {
-								if len(d.Subdomain) >0 {
-									fmt.Printf("%s ",d.Subdomain)
-								}
+						}
+
+						if options.SubDomain && found == false{
+							if len(d.Subdomain) >0 {
+								fmt.Printf("%s\n",parsed.TRD)
+								found = true
 							}
-							if options.Domain {
-								fmt.Printf("%s.%s",d.Domain,d.Tld)
-							}
-							if options.Suffix {
-								fmt.Printf("%s ",d.Tld)
-							}
-							fmt.Printf("\n")
+						}
+						if options.Domain && found == false{
+							fmt.Printf("%s\n",parsed.SLD)
+							found = true
+						}
+						if options.Suffix && found == false{
+							fmt.Printf("%s\n",parsed.TLD)
+							found = true
 						}
 					}
 				}
@@ -77,4 +92,3 @@ func Process(options *Options) {
 		}
 	}
 	wg.Wait()	
-}
