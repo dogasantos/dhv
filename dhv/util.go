@@ -2,21 +2,32 @@ package dhv
 
 import (
 	"github.com/bobesa/go-domain-util/domainutil"
+	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
 
 type DomainTokens struct {
+    Protocol string
 	Subdomain string
 	Domain string
 	Tld string
 }
 
-func ParseDomainTokens(value string) (*DomainTokens){
+func ParseUrlTokens(value string) (*DomainTokens){
 	var d DomainTokens
+    d.Protocol = domainutil.Protocol(value)
 	d.Subdomain = domainutil.Subdomain(value)
 	d.Domain = domainutil.Domain(value)
 	d.Tld = domainutil.DomainSuffix(value)
-
 	return &d
+}
+
+func ParseTokens(value string) *publicsuffix.DomainName {
+	var options publicsuffix.ParserOption
+	options.PrivateDomains = false
+	options.ASCIIEncoded = false
+	parsed,_ := publicsuffix.Parse(value)
+	return parsed
+
 }
 
 func sliceContainsElement(slice []string, element string) bool {

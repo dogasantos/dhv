@@ -23,8 +23,12 @@ func main() {
 	
 	options := dhv.Options{}
 	
-	flag.StringVar(&options.Hosts, 			"L", "", "File input with list of hosts")
-	flag.BoolVar(&options.Verbose, 			"verbose", false, "Verbose output")
+	flag.StringVar(&options.Hosts,                  "L", "", "File input with list of hosts")    
+	flag.BoolVar(&options.Fqdn,                   	"fqdn", true, "show the entire fqdn with no parsing at all (default)")      
+	flag.BoolVar(&options.Domain,                   "domain", false, "show domain portion")      
+	flag.BoolVar(&options.SubDomain,                "subdomain", false, "show subdomain portion")
+	flag.BoolVar(&options.Suffix,                   "suffix", false, "show suffix portion")      
+	flag.BoolVar(&options.Protocol,                 "protocol", false, "show protocol portion")  
 
 	flag.Parse()
 
@@ -37,7 +41,18 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-
+	if options.Domain == true {
+		options.Fqdn = false
+	}
+	if options.SubDomain == true {
+		options.Fqdn = false
+	}
+	if options.Suffix == true {
+		options.Fqdn = false
+	}
+	if options.Protocol == true {
+		options.Fqdn = false
+	}
 	dhv.Process(&options)
 
 }
